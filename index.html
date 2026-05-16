@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TROMAS AeroSpin Ventilation Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oswald:wght@400;500;600&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="top-nav">
+    <div class="container nav-inner">
+      <div class="brand-mark">
+        <img src="assets/tromas-logo.png" alt="TROMAS logo" class="brand-logo" />
+        <div>
+          <span class="brand-tag">TROMAS</span>
+          <span class="brand-sub">Engineered Industrial Ventilation Systems</span>
+        </div>
+      </div>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#calculator">Calculator</a>
+        <a href="#tech">Technical</a>
+        <a href="#specs">Specifications</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container app-grid">
+    <section class="hero panel">
+      <div class="hero-inner">
+        <p class="kicker">AEROSPIN SERIES</p>
+        <h1>Calculate Indicative Roof Ventilation Requirements</h1>
+        <p class="lede">Estimate the number of AeroSpin roof ventilators required for your project.</p>
+        <div class="badge-row">
+          <span class="badge badge-ok">Industrial Tool</span>
+          <span class="badge badge-neutral">Indicative Calculator</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="brand-strip panel">
+      <div class="strip-item"><strong>Australian Engineered</strong><span>Built for local conditions</span></div>
+      <div class="strip-item"><strong>Durable Materials</strong><span>Industrial-grade construction</span></div>
+      <div class="strip-item"><strong>Weather Proven</strong><span>Designed for harsh environments</span></div>
+      <div class="strip-item"><strong>Industrial Strength</strong><span>Long-term performance</span></div>
+    </section>
+
+    <section id="tech" class="system-grid">
+      <article class="panel media-card">
+        <div class="panel-head">
+          <h2>Technical Drawing Reference</h2>
+          <p>Engineering drawing style for dimensions, installation and product details.</p>
+        </div>
+        <img src="assets/aerospin-tech-drawing.png" alt="AeroSpin technical drawing and details" class="media-image" />
+      </article>
+
+      <article class="panel media-card">
+        <div class="panel-head">
+          <h2>Product Render</h2>
+          <p>Visual reference for AeroSpin blade profile and base assembly.</p>
+        </div>
+        <img src="assets/aerospin-product.png" alt="AeroSpin product image" class="media-image product-image" />
+      </article>
+    </section>
+
+    <section id="calculator" class="calc-grid">
+      <form id="calculator-form" class="panel spec-panel" novalidate>
+        <div class="panel-head">
+          <h2>AeroSpin Ventilation Calculator</h2>
+          <p>Enter project dimensions and roof conditions.</p>
+        </div>
+
+        <div class="field-grid">
+          <div class="field"><label for="roofLength">Roof length (m)</label><input id="roofLength" name="roofLength" type="number" min="0" step="0.01" required /></div>
+          <div class="field"><label for="roofWidth">Roof width (m)</label><input id="roofWidth" name="roofWidth" type="number" min="0" step="0.01" required /></div>
+          <div class="field"><label for="roofPitch">Roof pitch (degrees)</label><input id="roofPitch" name="roofPitch" type="number" min="0" step="0.1" required /></div>
+          <div class="field"><label for="buildingType">Building type</label><select id="buildingType" name="buildingType" required><option value="Warehouse">Warehouse</option><option value="Factory">Factory</option><option value="Workshop">Workshop</option><option value="Shed">Shed</option><option value="Commercial">Commercial</option></select></div>
+          <div class="field"><label for="roofType">Roof type</label><select id="roofType" name="roofType" required><option value="Gable">Gable</option><option value="Skillion">Skillion</option><option value="Flat">Flat</option></select></div>
+          <div class="field"><label for="ceilingType">Ceiling type</label><select id="ceilingType" name="ceilingType" required><option value="Flat ceiling">Flat ceiling</option><option value="Raked / cathedral ceiling">Raked / cathedral ceiling</option></select></div>
+          <div class="field"><label for="climateZone">Climate zone</label><select id="climateZone" name="climateZone" required><option value="Zone 4">Zone 4</option><option value="Zone 5">Zone 5</option><option value="Zone 6">Zone 6</option><option value="Zone 7">Zone 7</option><option value="Zone 8">Zone 8</option></select></div>
+          <div class="field"><label for="existingVentilation">Existing ventilation</label><select id="existingVentilation" name="existingVentilation" required><option value="Yes">Yes</option><option value="No">No</option></select></div>
+          <div class="field"><label for="insulationPresent">Insulation present</label><select id="insulationPresent" name="insulationPresent" required><option value="Yes">Yes</option><option value="No">No</option></select></div>
+        </div>
+
+        <div class="action-row">
+          <button type="submit" class="btn btn-primary">Calculate</button>
+          <button type="reset" class="btn btn-secondary">Reset</button>
+          <button type="button" id="copyResults" class="btn btn-secondary">Copy Result</button>
+        </div>
+      </form>
+
+      <section class="panel result-panel" aria-live="polite">
+        <div class="panel-head">
+          <h2>Calculated Output</h2>
+          <p>Technical result summary for project review.</p>
+        </div>
+
+        <article class="output-block">
+          <p class="output-label">Recommended AeroSpin Units</p>
+          <p id="requiredUnits" class="output-value">-</p>
+        </article>
+
+        <dl class="data-list">
+          <div><dt>Roof area</dt><dd id="roofArea">-</dd></div>
+          <div><dt>Required high-level ventilation</dt><dd id="requiredHighLevelVentilation">-</dd></div>
+          <div><dt>Required LM equivalent</dt><dd id="requiredLmEquivalent">-</dd></div>
+          <div><dt>Total LM provided</dt><dd id="totalLmProvided">-</dd></div>
+          <div><dt>Low-level ventilation required</dt><dd id="lowLevelVentilation">-</dd></div>
+        </dl>
+
+        <aside class="callout callout-warn">
+          <h3>Warning / Notes</h3>
+          <p id="notes">Indicative only — final specification must be confirmed by installer, certifier, or engineer.</p>
+        </aside>
+
+        <section class="tech-block">
+          <h3>Technical Notes</h3>
+          <ul>
+            <li>AEROSPIN_LM_PER_UNIT = 2.63</li>
+            <li>HIGH_LEVEL_RATE_STANDARD = 5000</li>
+            <li>LOW_LEVEL_RATE_STANDARD = 7000</li>
+            <li>LOW_LEVEL_RATE_HIGH = 25000</li>
+          </ul>
+        </section>
+      </section>
+    </section>
+
+    <section class="info-grid">
+      <article class="panel info-card"><h3>Indicative only</h3><p>This calculator provides an indicative estimate only.</p></article>
+      <article class="panel info-card"><h3>Installer confirmation required</h3><p>Final specification must be validated for each project.</p></article>
+      <article class="panel info-card"><h3>Based on project inputs</h3><p>Outputs are generated from selected dimensions and assumptions.</p></article>
+      <article class="panel info-card"><h3>Contact TROMAS for support</h3><p>For project assistance, contact the TROMAS team.</p></article>
+    </section>
+
+    <section id="specs" class="system-grid">
+      <article class="panel product-card">
+        <div class="panel-head">
+          <h2>Packaging Front Reference</h2>
+          <p>Kraft industrial specification layout reference.</p>
+        </div>
+        <img src="assets/packaging-front.png" alt="TROMAS packaging front" class="media-image" />
+      </article>
+
+      <article class="panel table-card">
+        <div class="panel-head">
+          <h2>Packaging Back Reference</h2>
+          <p>Installation steps and performance icon reference.</p>
+        </div>
+        <img src="assets/packaging-back.png" alt="TROMAS packaging back" class="media-image" />
+      </article>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
