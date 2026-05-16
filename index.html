@@ -21,8 +21,7 @@
       </div>
       <nav class="nav-links" aria-label="Primary">
         <a href="#calculator">Calculator</a>
-        <a href="#tech">Technical</a>
-        <a href="#specs">Specifications</a>
+        <a href="#resources">Resources</a>
       </nav>
     </div>
   </header>
@@ -45,24 +44,6 @@
       <div class="strip-item"><strong>Durable Materials</strong><span>Industrial-grade construction</span></div>
       <div class="strip-item"><strong>Weather Proven</strong><span>Designed for harsh environments</span></div>
       <div class="strip-item"><strong>Industrial Strength</strong><span>Long-term performance</span></div>
-    </section>
-
-    <section id="tech" class="system-grid">
-      <article class="panel media-card">
-        <div class="panel-head">
-          <h2>Technical Drawing Reference</h2>
-          <p>Engineering drawing style for dimensions, installation and product details.</p>
-        </div>
-        <img src="assets/aerospin-tech-drawing.png" alt="AeroSpin technical drawing and details" class="media-image" />
-      </article>
-
-      <article class="panel media-card">
-        <div class="panel-head">
-          <h2>Product Render</h2>
-          <p>Visual reference for AeroSpin blade profile and base assembly.</p>
-        </div>
-        <img src="assets/aerospin-product.png" alt="AeroSpin product image" class="media-image product-image" />
-      </article>
     </section>
 
     <section id="calculator" class="calc-grid">
@@ -115,6 +96,10 @@
           <p id="notes">Indicative only — final specification must be confirmed by installer, certifier, or engineer.</p>
         </aside>
 
+        <div class="action-row result-action-row">
+          <button type="button" id="sendOrder" class="btn btn-primary">Send Order</button>
+        </div>
+
         <section class="tech-block">
           <h3>Technical Notes</h3>
           <ul>
@@ -134,22 +119,32 @@
       <article class="panel info-card"><h3>Contact TROMAS for support</h3><p>For project assistance, contact the TROMAS team.</p></article>
     </section>
 
-    <section id="specs" class="system-grid">
-      <article class="panel product-card">
-        <div class="panel-head">
-          <h2>Packaging Front Reference</h2>
-          <p>Kraft industrial specification layout reference.</p>
-        </div>
-        <img src="assets/packaging-front.png" alt="TROMAS packaging front" class="media-image" />
-      </article>
+    <section id="resources" class="panel tabs-panel">
+      <div class="panel-head">
+        <h2>Technical Resources</h2>
+        <p>Use tabs to view drawings and packaging references without cluttering the calculator.</p>
+      </div>
 
-      <article class="panel table-card">
-        <div class="panel-head">
-          <h2>Packaging Back Reference</h2>
-          <p>Installation steps and performance icon reference.</p>
+      <div class="tabs" role="tablist" aria-label="Technical references">
+        <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-tech" id="btn-tech" data-tab="tab-tech">Technical Drawing</button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-render" id="btn-render" data-tab="tab-render">Product Render</button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-pack" id="btn-pack" data-tab="tab-pack">Packaging</button>
+      </div>
+
+      <div id="tab-tech" class="tab-content active" role="tabpanel" aria-labelledby="btn-tech">
+        <img src="assets/aerospin-tech-drawing.png" alt="AeroSpin technical drawing and details" class="media-image" />
+      </div>
+
+      <div id="tab-render" class="tab-content" role="tabpanel" aria-labelledby="btn-render" hidden>
+        <img src="assets/aerospin-product.png" alt="AeroSpin product image" class="media-image product-image" />
+      </div>
+
+      <div id="tab-pack" class="tab-content" role="tabpanel" aria-labelledby="btn-pack" hidden>
+        <div class="system-grid">
+          <img src="assets/packaging-front.png" alt="TROMAS packaging front" class="media-image" />
+          <img src="assets/packaging-back.png" alt="TROMAS packaging back" class="media-image" />
         </div>
-        <img src="assets/packaging-back.png" alt="TROMAS packaging back" class="media-image" />
-      </article>
+      </div>
     </section>
   </main>
 

@@ -6,6 +6,7 @@ const LOW_LEVEL_RATE_HIGH = 25000;
 
 const form = document.getElementById("calculator-form");
 const copyResultsButton = document.getElementById("copyResults");
+const sendOrderButton = document.getElementById("sendOrder");
 
 const results = {
   requiredUnits: document.getElementById("requiredUnits"),
@@ -73,6 +74,23 @@ function buildSummaryText() {
   ].join("\n");
 }
 
+function activateTab(tabId) {
+  const buttons = document.querySelectorAll(".tab-btn");
+  const panels = document.querySelectorAll(".tab-content");
+
+  buttons.forEach((button) => {
+    const isActive = button.dataset.tab === tabId;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+  });
+
+  panels.forEach((panel) => {
+    const isActive = panel.id === tabId;
+    panel.classList.toggle("active", isActive);
+    panel.hidden = !isActive;
+  });
+}
+
 form.addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -137,4 +155,17 @@ copyResultsButton.addEventListener("click", async () => {
   }
 });
 
+sendOrderButton.addEventListener("click", () => {
+  const subject = encodeURIComponent("AeroSpin Order Request");
+  const body = encodeURIComponent(`${buildSummaryText()}\n\nPlease contact me to proceed with this order request.`);
+  window.location.href = `mailto:sales@tromas.com.au?subject=${subject}&body=${body}`;
+});
+
+document.querySelectorAll(".tab-btn").forEach((button) => {
+  button.addEventListener("click", () => {
+    activateTab(button.dataset.tab);
+  });
+});
+
+activateTab("tab-tech");
 resetResults();
