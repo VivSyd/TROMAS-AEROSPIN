@@ -1,4 +1,4 @@
-// Calculator constants are kept in one place for easier future adjustments.
+﻿// Calculator constants are kept in one place for easier future adjustments.
 const AEROSPIN_LM_PER_UNIT = 2.63;
 const HIGH_LEVEL_RATE_STANDARD = 5000;
 const LOW_LEVEL_RATE_STANDARD = 7000;
@@ -7,6 +7,7 @@ const LOW_LEVEL_RATE_HIGH = 25000;
 const form = document.getElementById("calculator-form");
 const copyResultsButton = document.getElementById("copyResults");
 const sendOrderButton = document.getElementById("sendOrder");
+const downloadPdfButton = document.getElementById("downloadPdf");
 const calculatorSection = document.getElementById("calculator");
 const resourcesSection = document.getElementById("resources");
 
@@ -20,7 +21,7 @@ const results = {
   notes: document.getElementById("notes")
 };
 
-const defaultNote = "Indicative only. Final specification must be confirmed by installer, certifier, or engineer.";
+const defaultNote = "Indicative only. Final ventilation requirements must be confirmed by a qualified installer, certifier, or engineer.";
 
 function formatNumber(value, decimals = 2) {
   return new Intl.NumberFormat("en-AU", {
@@ -74,6 +75,29 @@ function buildSummaryText() {
     `Low-level ventilation required: ${results.lowLevelVentilation.textContent}`,
     `Notes: ${results.notes.textContent}`
   ].join("\n");
+}
+
+function buildSummaryHtml() {
+  const generatedAt = new Date().toLocaleString("en-AU");
+  const lines = buildSummaryText().split("\n").map((line) => `<p>${line}</p>`).join("");
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TROMAS Estimate</title>
+  <style>
+    body { font-family: Arial, sans-serif; color: #111; margin: 32px; }
+    h1 { margin: 0 0 12px; font-size: 22px; }
+    p { margin: 6px 0; font-size: 14px; }
+    .meta { margin-top: 20px; color: #555; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>TROMAS AeroSpin 500 Estimate</h1>
+  ${lines}
+  <p class="meta">Generated: ${generatedAt}</p>
+</body>
+</html>`;
 }
 
 function activateTab(tabId) {
@@ -171,6 +195,20 @@ sendOrderButton.addEventListener("click", () => {
   const subject = encodeURIComponent("AeroSpin Order Request");
   const body = encodeURIComponent(`${buildSummaryText()}\n\nPlease contact me to proceed with this order request.`);
   window.location.href = `mailto:sales@tromas.com.au?subject=${subject}&body=${body}`;
+});
+
+downloadPdfButton.addEventListener("click", () => {
+  const printWindow = window.open("", "_blank", "width=900,height=700");
+  if (!printWindow) {
+    results.notes.textContent = "Pop-up blocked. Please allow pop-ups to download the PDF estimate.";
+    return;
+  }
+
+  printWindow.document.open();
+  printWindow.document.write(buildSummaryHtml());
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
 });
 
 document.querySelectorAll(".tab-btn").forEach((button) => {
