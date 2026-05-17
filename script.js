@@ -7,6 +7,8 @@ const LOW_LEVEL_RATE_HIGH = 25000;
 const form = document.getElementById("calculator-form");
 const copyResultsButton = document.getElementById("copyResults");
 const sendOrderButton = document.getElementById("sendOrder");
+const calculatorSection = document.getElementById("calculator");
+const resourcesSection = document.getElementById("resources");
 
 const results = {
   requiredUnits: document.getElementById("requiredUnits"),
@@ -91,6 +93,16 @@ function activateTab(tabId) {
   });
 }
 
+function syncSectionVisibility() {
+  const showResources = window.location.hash === "#resources";
+  if (calculatorSection) {
+    calculatorSection.hidden = showResources;
+  }
+  if (resourcesSection) {
+    resourcesSection.hidden = !showResources;
+  }
+}
+
 form.addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -169,3 +181,5 @@ document.querySelectorAll(".tab-btn").forEach((button) => {
 
 activateTab("tab-tech");
 resetResults();
+syncSectionVisibility();
+window.addEventListener("hashchange", syncSectionVisibility);
