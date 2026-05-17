@@ -18,7 +18,7 @@ const results = {
   notes: document.getElementById("notes")
 };
 
-const defaultNote = "Indicative only — final specification must be confirmed by installer, certifier, or engineer.";
+const defaultNote = "Indicative only. Final specification must be confirmed by installer, certifier, or engineer.";
 
 function formatNumber(value, decimals = 2) {
   return new Intl.NumberFormat("en-AU", {
@@ -122,11 +122,11 @@ form.addEventListener("submit", (event) => {
   }
 
   results.requiredUnits.textContent = requiredUnitsDisplay;
-  results.roofArea.textContent = `${formatNumber(roofArea)} m²`;
-  results.requiredHighLevelVentilation.textContent = `${formatNumber(requiredHighLevelVentilation, 0)} mm²`;
+  results.roofArea.textContent = `${formatNumber(roofArea)} mÂ²`;
+  results.requiredHighLevelVentilation.textContent = `${formatNumber(requiredHighLevelVentilation, 0)} mmÂ²`;
   results.requiredLmEquivalent.textContent = `${formatNumber(requiredLmEquivalent)} LM`;
   results.totalLmProvided.textContent = highLevelRate === 0 ? "-" : `${formatNumber(totalLmProvided)} LM`;
-  results.lowLevelVentilation.textContent = `${formatNumber(lowLevelRate, 0)} mm² per LM`;
+  results.lowLevelVentilation.textContent = `${formatNumber(lowLevelRate, 0)} mmÂ² per LM`;
 
   const notes = [defaultNote];
   if (warning) {
@@ -148,7 +148,7 @@ copyResultsButton.addEventListener("click", async () => {
     await navigator.clipboard.writeText(summary);
     copyResultsButton.textContent = "Copied";
     setTimeout(() => {
-      copyResultsButton.textContent = "Copy Result";
+      copyResultsButton.textContent = "Copy Results";
     }, 1400);
   } catch {
     results.notes.textContent = "Clipboard access was blocked. Please copy results manually.";
