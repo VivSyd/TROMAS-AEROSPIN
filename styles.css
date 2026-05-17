@@ -34,7 +34,7 @@ body { background: var(--bg-base); color: var(--text-primary); font-family: var(
 .top-nav { border-bottom: 1px solid var(--border-soft); background: var(--bg-base); position: sticky; top: 0; z-index: 20; }
 .nav-inner { min-height: 78px; display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); }
 .brand-mark { display: flex; align-items: center; gap: 0.85rem; }
-.brand-logo { width: 54px; height: 54px; object-fit: contain; border: 1px solid rgba(43,43,43,.25); background: var(--bg-base); }
+.brand-logo { width: 54px; height: 54px; object-fit: contain; border: 0; background: transparent; }
 .brand-tag { display:block; font-family: var(--font-heading); font-size: 1.2rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; }
 .brand-sub { display:block; color: #4c5054; font-size: 0.78rem; letter-spacing: .02em; }
 .nav-links { display: flex; gap: var(--space-5); }
