@@ -1,8 +1,5 @@
 ﻿// Calculator constants are kept in one place for easier future adjustments.
-const AEROSPIN_LM_PER_UNIT = 2.63;
-const HIGH_LEVEL_RATE_STANDARD = 5000;
-const LOW_LEVEL_RATE_STANDARD = 7000;
-const LOW_LEVEL_RATE_HIGH = 25000;
+const AEROSPIN_500_EFFECTIVE_AREA_DEFAULT = 250000;
 
 const form = document.getElementById("calculator-form");
 const copyResultsButton = document.getElementById("copyResults");
@@ -30,27 +27,41 @@ function formatNumber(value, decimals = 2) {
   }).format(value);
 }
 
-function getVentilationRates(roofPitch, ceilingType) {
+function calculateAeroSpin500({
+  roofLength,
+  roofPitch,
+  ceilingType,
+  aeroSpin500EffectiveArea = AEROSPIN_500_EFFECTIVE_AREA_DEFAULT
+}) {
+  if (roofLength <= 0 || aeroSpin500EffectiveArea <= 0 || roofPitch < 0) {
+    throw new Error("Invalid input values.");
+  }
+
+  let requiredArea;
+
   if (roofPitch < 10) {
-    return { lowLevelRate: LOW_LEVEL_RATE_HIGH, highLevelRate: 0, warning: "" };
+    requiredArea = roofLength * 25000 * 2;
+  } else if (roofPitch < 15) {
+    requiredArea = roofLength * (25000 + 5000);
+  } else {
+    requiredArea = roofLength * (7000 + 5000);
   }
 
-  if (roofPitch >= 10 && roofPitch < 15) {
-    return { lowLevelRate: LOW_LEVEL_RATE_HIGH, highLevelRate: HIGH_LEVEL_RATE_STANDARD, warning: "" };
+  const isCathedral =
+    ceilingType === "cathedral" ||
+    ceilingType === "Raked / cathedral ceiling";
+
+  if (isCathedral) {
+    requiredArea += roofLength * 18000;
   }
 
-  if (roofPitch >= 15 && roofPitch < 75) {
-    if (ceilingType === "Raked / cathedral ceiling") {
-      return { lowLevelRate: LOW_LEVEL_RATE_HIGH, highLevelRate: HIGH_LEVEL_RATE_STANDARD, warning: "" };
-    }
-
-    return { lowLevelRate: LOW_LEVEL_RATE_STANDARD, highLevelRate: HIGH_LEVEL_RATE_STANDARD, warning: "" };
-  }
+  const finalUnits = Math.max(1, Math.ceil(requiredArea / aeroSpin500EffectiveArea));
+  const spacing = roofLength / finalUnits;
 
   return {
-    lowLevelRate: LOW_LEVEL_RATE_STANDARD,
-    highLevelRate: HIGH_LEVEL_RATE_STANDARD,
-    warning: "Roof pitch is outside the normal calculator range. Please confirm with installer or engineer."
+    requiredArea,
+    finalUnits,
+    spacing: Number(spacing.toFixed(2))
   };
 }
 
@@ -131,45 +142,36 @@ form.addEventListener("submit", (event) => {
   event.preventDefault();
 
   const roofLength = Number(form.roofLength.value);
-  const roofWidth = Number(form.roofWidth.value);
   const roofPitch = Number(form.roofPitch.value);
   const ceilingType = form.ceilingType.value;
 
-  if (!roofLength || !roofWidth || roofPitch < 0) {
-    results.notes.textContent = "Please enter valid numeric values for roof length, roof width, and roof pitch.";
+  if (!roofLength || roofPitch < 0) {
+    results.notes.textContent = "Please enter valid numeric values for roof length and roof pitch.";
     return;
   }
 
-  const roofArea = roofLength * roofWidth;
-  const { lowLevelRate, highLevelRate, warning } = getVentilationRates(roofPitch, ceilingType);
-  const requiredHighLevelVentilation = highLevelRate * roofLength;
-  const requiredLmEquivalent = requiredHighLevelVentilation / HIGH_LEVEL_RATE_STANDARD;
-
-  let requiredUnitsDisplay = "";
-  let requiredUnitsValue = 0;
-  let totalLmProvided = 0;
-
-  if (highLevelRate === 0) {
-    requiredUnitsDisplay = "High-level ventilation may not be required based on selected pitch, but project must be checked.";
-  } else {
-    requiredUnitsValue = Math.ceil((requiredHighLevelVentilation / HIGH_LEVEL_RATE_STANDARD) / AEROSPIN_LM_PER_UNIT);
-    totalLmProvided = requiredUnitsValue * AEROSPIN_LM_PER_UNIT;
-    requiredUnitsDisplay = String(requiredUnitsValue);
+  let calculation;
+  try {
+    calculation = calculateAeroSpin500({
+      roofLength,
+      roofPitch,
+      ceilingType
+    });
+  } catch {
+    results.notes.textContent = "Invalid input values.";
+    return;
   }
 
-  results.requiredUnits.textContent = requiredUnitsDisplay;
-  results.roofArea.textContent = `${formatNumber(roofArea)} m²`;
-  results.requiredHighLevelVentilation.textContent = `${formatNumber(requiredHighLevelVentilation, 0)} mm²`;
-  results.requiredLmEquivalent.textContent = `${formatNumber(requiredLmEquivalent)} LM`;
-  results.totalLmProvided.textContent = highLevelRate === 0 ? "-" : `${formatNumber(totalLmProvided)} LM`;
-  results.lowLevelVentilation.textContent = `${formatNumber(lowLevelRate, 0)} mm² per LM`;
+  results.requiredUnits.textContent = String(calculation.finalUnits);
+  results.roofArea.textContent = `${formatNumber(roofLength)} m`;
+  results.requiredHighLevelVentilation.textContent = `${formatNumber(calculation.requiredArea, 0)} mm²`;
+  results.requiredLmEquivalent.textContent = `${formatNumber(calculation.spacing)} m`;
+  results.totalLmProvided.textContent = `${formatNumber(AEROSPIN_500_EFFECTIVE_AREA_DEFAULT, 0)} mm² per unit`;
+  results.lowLevelVentilation.textContent = `${formatNumber(calculation.spacing)} m apart`;
 
   const notes = [defaultNote];
-  if (warning) {
-    notes.unshift(warning);
-  }
-  if (highLevelRate === 0) {
-    notes.unshift("High-level ventilation may not be required based on selected pitch, but project must be checked.");
+  if (roofPitch >= 75) {
+    notes.unshift("Manual review recommended.");
   }
   results.notes.textContent = notes.join(" ");
 });
