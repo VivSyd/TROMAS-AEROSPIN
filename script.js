@@ -156,6 +156,21 @@ function buildOrderHeaderText() {
   ].join("\n");
 }
 
+function buildOrderSubmissionText() {
+  const reportText = String(orderReportDetails?.value || "").trim() || buildSummaryText();
+  return [
+    "ORDER FORM SUBMISSION",
+    "",
+    "CUSTOMER DETAILS",
+    buildOrderHeaderText(),
+    "",
+    "ASSESSMENT REPORT DETAILS",
+    reportText,
+    "",
+    "Please process this order request and confirm next steps."
+  ].join("\r\n");
+}
+
 function buildReportId() {
   const d = new Date();
   const yy = String(d.getFullYear()).slice(-2);
@@ -378,20 +393,28 @@ sendOrderEmailButton.addEventListener("click", () => {
     return;
   }
 
+  // Refresh modal report snapshot right before send so latest calculated values are captured.
+  if (orderReportDetails) {
+    orderReportDetails.value = buildSummaryText();
+  }
+
   const subject = encodeURIComponent(`AeroSpin 500 Order Form - ${companyName}`);
-  const body = encodeURIComponent(
-    `Order Form Submission\n\n${buildOrderHeaderText()}\n\n${orderReportDetails.value}\n\nPlease process this order request and confirm next steps.`
-  );
+  const orderPayload = buildOrderSubmissionText();
+  const body = encodeURIComponent(orderPayload);
   const mailtoUrl = `mailto:viveka@srsc.net.au?subject=${subject}&body=${body}`;
   try {
-    const link = document.createElement("a");
-    link.href = mailtoUrl;
-    link.style.display = "none";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(orderPayload).catch(() => {});
+    }
+    // Prefer direct navigation for best compatibility across desktop/mobile mail clients.
+    window.location.href = mailtoUrl;
+    // Some environments ignore location mailto; fallback open in a second step.
     setTimeout(() => {
-      results.notes.textContent = "If your email app did not open, please email viveka@srsc.net.au and paste the copied results.";
+      window.open(mailtoUrl, "_self");
+    }, 120);
+    closeOrderModal();
+    setTimeout(() => {
+      results.notes.textContent = "If your email app did not open, please email viveka@srsc.net.au manually with the order form details.";
     }, 1200);
   } catch {
     results.notes.textContent = "Could not open your email app. Please email viveka@srsc.net.au manually.";
