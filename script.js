@@ -502,6 +502,28 @@ document.querySelectorAll(".tab-btn").forEach((button) => {
   });
 });
 
+document.querySelectorAll(".nav-btn[href^='#']").forEach((navButton) => {
+  navButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    const hash = navButton.getAttribute("href");
+    if (!hash) {
+      return;
+    }
+
+    if (window.location.hash !== hash) {
+      window.location.hash = hash;
+    }
+
+    // Ensure first-click behavior always updates section visibility.
+    syncSectionVisibility();
+
+    const target = document.querySelector(hash);
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+});
+
 updateClimateFallbackVisibility();
 activateTab("tab-tech");
 resetResults();
