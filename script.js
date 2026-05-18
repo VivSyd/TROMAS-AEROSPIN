@@ -23,6 +23,8 @@ const orderCustomerEmailInput = document.getElementById("orderCustomerEmail");
 const orderCompanyNameInput = document.getElementById("orderCompanyName");
 const orderCustomerPhoneInput = document.getElementById("orderCustomerPhone");
 const orderReportDetails = document.getElementById("orderReportDetails");
+const orderStatusMessage = document.getElementById("orderStatusMessage");
+const orderReferenceValue = document.getElementById("orderReferenceValue");
 const calculatorSection = document.getElementById("calculator");
 const resourcesSection = document.getElementById("resources");
 
@@ -158,14 +160,33 @@ function buildOrderHeaderText() {
 
 function buildOrderSubmissionText() {
   const reportText = String(orderReportDetails?.value || "").trim() || buildSummaryText();
+  const orderRef = buildReportId();
   return [
     "ORDER FORM SUBMISSION",
+    `Order Ref: ${orderRef}`,
     "",
     "CUSTOMER DETAILS",
     buildOrderHeaderText(),
     "",
     "ASSESSMENT REPORT DETAILS",
     reportText,
+    "",
+    "Please process this order request and confirm next steps."
+  ].join("\r\n");
+}
+
+function buildCompactOrderSubmissionText() {
+  return [
+    "ORDER FORM SUBMISSION",
+    "",
+    buildOrderHeaderText(),
+    "",
+    `Recommended Units: ${results.requiredUnits.textContent}`,
+    `Roof Length: ${results.roofArea.textContent}`,
+    `Climate Zone: ${results.totalLmProvided.textContent}`,
+    `Required Vent Area: ${results.requiredHighLevelVentilation.textContent}`,
+    `Approx Spacing: ${results.requiredLmEquivalent.textContent}`,
+    `Climate Summary: ${results.climateSummary.textContent}`,
     "",
     "Please process this order request and confirm next steps."
   ].join("\r\n");
@@ -189,6 +210,12 @@ function openOrderModal() {
     return;
   }
   orderReportDetails.value = buildSummaryText();
+  if (orderReferenceValue) {
+    orderReferenceValue.textContent = buildReportId();
+  }
+  if (orderStatusMessage) {
+    orderStatusMessage.textContent = "";
+  }
   orderModal.hidden = false;
 }
 
@@ -390,6 +417,9 @@ sendOrderEmailButton.addEventListener("click", () => {
 
   if (!customerName || !customerEmail || !companyName || !customerPhone) {
     results.notes.textContent = "Please complete customer name, email, company name, and phone before sending the order form.";
+    if (orderStatusMessage) {
+      orderStatusMessage.textContent = "Please complete all order form fields.";
+    }
     return;
   }
 
@@ -399,25 +429,35 @@ sendOrderEmailButton.addEventListener("click", () => {
   }
 
   const subject = encodeURIComponent(`AeroSpin 500 Order Form - ${companyName}`);
-  const orderPayload = buildOrderSubmissionText();
-  const body = encodeURIComponent(orderPayload);
-  const mailtoUrl = `mailto:viveka@srsc.net.au?subject=${subject}&body=${body}`;
+  const fullOrderPayload = buildOrderSubmissionText();
+  const orderRef = buildReportId();
+  const compactOrderPayload = buildCompactOrderSubmissionText();
+  const compactBody = encodeURIComponent(`Order Ref: ${orderRef}\r\n\r\n${compactOrderPayload}`);
+  const compactMailtoUrl = `mailto:viveka@srsc.net.au?subject=${subject}&body=${compactBody}`;
   try {
     if (navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(orderPayload).catch(() => {});
+      navigator.clipboard.writeText(fullOrderPayload).catch(() => {});
+      if (orderStatusMessage) {
+        orderStatusMessage.textContent = "Order details copied. Opening your email app now.";
+      }
     }
-    // Prefer direct navigation for best compatibility across desktop/mobile mail clients.
-    window.location.href = mailtoUrl;
-    // Some environments ignore location mailto; fallback open in a second step.
+    // Use compact mail body for better compatibility with strict mailto length limits.
+    window.location.href = compactMailtoUrl;
     setTimeout(() => {
-      window.open(mailtoUrl, "_self");
-    }, 120);
+      window.open(compactMailtoUrl, "_self");
+    }, 150);
     closeOrderModal();
     setTimeout(() => {
-      results.notes.textContent = "If your email app did not open, please email viveka@srsc.net.au manually with the order form details.";
+      results.notes.textContent = "If your email app did not open, the full order details were copied to clipboard. Email viveka@srsc.net.au and paste them.";
+      if (orderStatusMessage) {
+        orderStatusMessage.textContent = "If email did not open, paste the copied order details into a manual email to viveka@srsc.net.au.";
+      }
     }, 1200);
   } catch {
-    results.notes.textContent = "Could not open your email app. Please email viveka@srsc.net.au manually.";
+    results.notes.textContent = "Could not open your email app. Full order details were copied. Please email viveka@srsc.net.au manually and paste them.";
+    if (orderStatusMessage) {
+      orderStatusMessage.textContent = "Email app did not open. Please paste copied order details into a manual email to viveka@srsc.net.au.";
+    }
   }
 });
 }

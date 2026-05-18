@@ -144,6 +144,10 @@
         <h2 id="orderModalTitle">TROMAS Order Form</h2>
         <p>Complete customer details and send this assessment as an order request.</p>
       </div>
+      <div class="order-contact">
+        <strong>Order with TROMAS: 1300 991 932</strong>
+        <span>Order Ref: <b id="orderReferenceValue">-</b></span>
+      </div>
       <div class="field-grid">
         <div class="field"><label for="orderCustomerName">Customer name</label><input id="orderCustomerName" type="text" required /></div>
         <div class="field"><label for="orderCustomerEmail">Customer email</label><input id="orderCustomerEmail" type="email" required /></div>
@@ -158,6 +162,7 @@
         <button type="button" id="sendOrderEmail" class="btn btn-primary">Send Order to TROMAS</button>
         <button type="button" id="closeOrderModal" class="btn btn-secondary">Cancel</button>
       </div>
+      <p id="orderStatusMessage" class="order-status" aria-live="polite"></p>
     </section>
   </div>
 
