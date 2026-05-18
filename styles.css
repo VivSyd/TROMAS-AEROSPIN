@@ -46,8 +46,24 @@ body { background: var(--bg-base); color: var(--text-primary); font-family: var(
 .nav-links a.nav-btn:hover { color: var(--color-kraft-brown); }
 .app-grid { display: grid; gap: var(--space-6); padding-block: var(--space-6) var(--space-10); }
 .panel { background: var(--bg-panel); border: 1px solid var(--border-soft); border-radius: var(--radius-none); box-shadow: none; padding: var(--space-6); }
+.spec-panel,
+.result-panel {
+  position: relative;
+  overflow: hidden;
+}
+.spec-panel::before,
+.result-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(22,58,52,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22,58,52,0.03) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
 .hero { position:relative; overflow:hidden; background: var(--bg-base); border-color: var(--border-strong); }
-.hero::before { content:""; position:absolute; inset:0; background:url('assets/aerospin-hero-ref.jpg') center/cover no-repeat; opacity:.06; filter:grayscale(100%); }
+.hero::before { content:none; }
 .hero-inner { position:relative; z-index:1; }
 .kicker { margin: 0; font-family: var(--font-spec); color: var(--color-kraft-brown); text-transform: uppercase; letter-spacing: 0.08em; }
 h1,h2,h3 { margin: 0; font-family: var(--font-heading); letter-spacing: 0.04em; text-transform: uppercase; }
@@ -73,11 +89,25 @@ input:focus,select:focus,textarea:focus { outline: 2px solid var(--focus-ring); 
 .action-row { margin-top: var(--space-5); display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .result-action-row { margin-top: var(--space-4); }
 .btn { min-height: 46px; padding: 0.64rem 1rem; border-radius: var(--radius-none); border: 1px solid transparent; font: 700 0.86rem/1 var(--font-spec); text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; }
-.btn-primary { color: var(--color-kraft-brown); background: var(--color-primary-green); border-color: #23472a; }
-.btn-primary:hover { background: #0d2712; color: var(--color-kraft-brown); }
-.btn-secondary { color: #000; background: var(--color-kraft-brown); border-color: var(--color-kraft-brown); }
-.btn-secondary:hover { background: #a6794d; border-color: #a6794d; color: #000; }
-.output-block { border: 1px solid var(--border-soft); background: var(--bg-panel-alt); padding: var(--space-5); }
+.btn-primary,
+.btn-secondary {
+  color: #ffffff;
+  background: var(--color-primary-green);
+  border-color: #23472a;
+}
+.btn-primary:hover,
+.btn-secondary:hover {
+  background: #0d2712;
+  border-color: #0d2712;
+  color: #ffffff;
+}
+.output-block {
+  border: 1px solid var(--border-soft);
+  background:
+    linear-gradient(135deg, rgba(22,58,52,0.07), rgba(22,58,52,0.01)),
+    var(--bg-panel-alt);
+  padding: var(--space-5);
+}
 .output-label { margin: 0; font-family: var(--font-spec); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
 .output-value { margin: 0.3rem 0 0; font-size: clamp(1.9rem, 4vw, 2.9rem); font-weight: 800; letter-spacing: 0.02em; }
 .data-list { margin: var(--space-5) 0; display: grid; gap: 0.46rem; }
@@ -87,6 +117,11 @@ dd { margin: 0; font-weight: 600; }
 .callout { border-left: 4px solid var(--color-kraft-brown); border: 1px solid rgba(184, 138, 90, 0.45); background: #fbf6ee; padding: var(--space-4); }
 .callout h3 { margin-bottom: 0.3rem; }
 .callout p { margin: 0; }
+.callout-warn {
+  background:
+    linear-gradient(135deg, rgba(201,139,46,0.12), rgba(201,139,46,0.03)),
+    #fbf6ee;
+}
 .tech-block { margin-top: var(--space-5); border: 1px dashed rgba(139, 143, 146, 0.5); background: #f4f4f1; padding: var(--space-4); }
 .tech-block ul { margin: 0.55rem 0 0; padding-left: 1.1rem; }
 .climate-map-panel {
@@ -107,6 +142,17 @@ dd { margin: 0; font-weight: 600; }
 .climate-map-image {
   background: var(--bg-base);
   border-color: rgba(139, 143, 146, 0.35);
+}
+.result-panel .panel-head::after {
+  content: "ENGINEERING REPORT";
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.2rem 0.45rem;
+  border: 1px solid rgba(22,58,52,0.35);
+  font-family: var(--font-spec);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--color-primary-green);
 }
 .info-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); }
 .info-card { background: var(--bg-base); }

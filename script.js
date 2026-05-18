@@ -44,6 +44,11 @@ const results = {
 };
 
 const defaultNote = "Indicative only. Final ventilation requirements must be confirmed by a qualified installer, certifier, or engineer.";
+const REPORT_PRIMARY_GREEN = "#163A34";
+const REPORT_DEEP_GRAPHITE = "#1A1A1A";
+const REPORT_INDUSTRIAL_GREY = "#707070";
+const REPORT_KRAFT = "#D8C3A5";
+const REPORT_WARNING_AMBER = "#C98B2E";
 
 function formatNumber(value, decimals = 2) {
   return new Intl.NumberFormat("en-AU", {
@@ -95,9 +100,10 @@ function calculateAeroSpin500({
     warnings.push("Manual review recommended for steep roof pitch.");
   }
 
+  const ceilingTypeNormalized = String(ceilingType || "").trim().toLowerCase();
   const isCathedral =
-    ceilingType === "cathedral" ||
-    ceilingType === "Raked / cathedral ceiling";
+    ceilingTypeNormalized === "cathedral" ||
+    ceilingTypeNormalized === "raked / cathedral ceiling";
 
   if (isCathedral) {
     requiredArea += rl * 18000;
@@ -139,7 +145,7 @@ function resetResults() {
 
 function buildSummaryText() {
   return [
-    "AeroSpin Ventilation Calculator Result",
+    "TROMAS AeroSpin Passive Ventilation Assessment Report",
     `Recommended AeroSpin Units: ${results.requiredUnits.textContent}`,
     `Roof length: ${results.roofArea.textContent}`,
     `Climate zone: ${results.totalLmProvided.textContent}`,
@@ -149,6 +155,14 @@ function buildSummaryText() {
     `Climate summary: ${results.climateSummary.textContent}`,
     `Notes: ${results.notes.textContent}`
   ].join("\n");
+}
+
+function buildReportId() {
+  const d = new Date();
+  const yy = String(d.getFullYear()).slice(-2);
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `TVR-${yy}${mm}${dd}-001`;
 }
 
 function updateClimateFallbackVisibility() {
@@ -167,23 +181,104 @@ function updateClimateFallbackVisibility() {
 
 function buildSummaryHtml() {
   const generatedAt = new Date().toLocaleString("en-AU");
-  const lines = buildSummaryText().split("\n").map((line) => `<p>${line}</p>`).join("");
+  const reportId = buildReportId();
+  const warningActive = results.notes.textContent.includes("Condensation risk elevated") || results.notes.textContent.includes("Manual review recommended");
+  const climateAssessmentTitle = warningActive ? "Climate Performance Assessment: Attention Required" : "Climate Performance Assessment: Standard";
+  const climateAssessmentTone = warningActive ? `border-left: 6px solid ${REPORT_WARNING_AMBER};` : `border-left: 6px solid ${REPORT_PRIMARY_GREEN};`;
+
   return `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TROMAS Estimate</title>
+  <title>TROMAS Ventilation Assessment Report</title>
   <style>
-    body { font-family: Arial, sans-serif; color: #111; margin: 32px; }
-    h1 { margin: 0 0 12px; font-size: 22px; }
-    p { margin: 6px 0; font-size: 14px; }
-    .meta { margin-top: 20px; color: #555; font-size: 12px; }
+    body {
+      font-family: Inter, Arial, sans-serif;
+      color: ${REPORT_DEEP_GRAPHITE};
+      margin: 24px;
+      background-image:
+        linear-gradient(rgba(22,58,52,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(22,58,52,0.03) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .report-shell { position: relative; }
+    .watermark {
+      position: absolute;
+      right: 10px;
+      top: 78px;
+      font-family: Rajdhani, Arial, sans-serif;
+      font-size: 52px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      color: rgba(22,58,52,0.07);
+      pointer-events: none;
+      user-select: none;
+      text-transform: uppercase;
+    }
+    .header { background: ${REPORT_PRIMARY_GREEN}; color: #fff; padding: 18px 20px; }
+    .brand { font-family: Rajdhani, Arial, sans-serif; font-size: 24px; font-weight: 700; letter-spacing: .08em; }
+    .sub { font-family: Rajdhani, Arial, sans-serif; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; margin-top: 4px; }
+    .meta { margin-top: 10px; font-size: 12px; color: #d8e2de; }
+    .section { margin-top: 18px; border: 1px solid #d2d2d2; }
+    .section-head { background: #f3f3f3; font-family: Rajdhani, Arial, sans-serif; font-weight: 700; padding: 10px 12px; text-transform: uppercase; letter-spacing: .06em; }
+    .kpi-wrap { display: grid; grid-template-columns: 1.2fr .8fr; gap: 0; }
+    .kpi-table { width: 100%; border-collapse: collapse; }
+    .kpi-table td { padding: 9px 12px; border-top: 1px solid #e1e1e1; font-size: 13px; }
+    .kpi-table td:first-child { color: ${REPORT_INDUSTRIAL_GREY}; font-weight: 600; width: 55%; }
+    .hero-number { background: ${REPORT_KRAFT}; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 18px 10px; border-left: 1px solid #c8b18f; }
+    .hero-number .value { font-family: Rajdhani, Arial, sans-serif; font-size: 72px; line-height: 1; font-weight: 700; color: ${REPORT_PRIMARY_GREEN}; }
+    .hero-number .label { margin-top: 8px; text-align: center; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: ${REPORT_DEEP_GRAPHITE}; font-weight: 600; }
+    .assessment { margin-top: 18px; padding: 14px; background: linear-gradient(135deg, rgba(201,139,46,0.10), rgba(201,139,46,0.02)); ${climateAssessmentTone} }
+    .assessment h3 { margin: 0 0 8px; font-family: Rajdhani, Arial, sans-serif; text-transform: uppercase; letter-spacing: .05em; font-size: 15px; }
+    .assessment p { margin: 0 0 8px; font-size: 13px; }
+    .assessment ul { margin: 0; padding-left: 18px; }
+    .assessment li { margin: 4px 0; font-size: 13px; }
+    .footer { margin-top: 20px; padding-top: 14px; border-top: 2px solid ${REPORT_PRIMARY_GREEN}; }
+    .footer .tag { font-family: Rajdhani, Arial, sans-serif; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; margin-bottom: 6px; }
+    .footer p { margin: 0; font-size: 12px; color: #444; line-height: 1.5; }
   </style>
 </head>
 <body>
-  <h1>TROMAS AeroSpin 500 Estimate</h1>
-  ${lines}
-  <p class="meta">Generated: ${generatedAt}</p>
+  <div class="report-shell">
+    <div class="watermark">TROMAS</div>
+    <header class="header">
+      <div class="brand">TROMAS</div>
+      <div class="sub">AeroSpin Passive Ventilation Assessment Report</div>
+      <div class="meta">Report ID: ${reportId} | Generated: ${generatedAt}</div>
+    </header>
+
+    <section class="section">
+      <div class="section-head">Project Summary</div>
+      <div class="kpi-wrap">
+        <table class="kpi-table" aria-label="Project summary metrics">
+          <tr><td>Roof Length</td><td>${results.roofArea.textContent}</td></tr>
+          <tr><td>Climate Zone</td><td>${results.totalLmProvided.textContent}</td></tr>
+          <tr><td>Ventilation Requirement</td><td>${results.requiredHighLevelVentilation.textContent}</td></tr>
+          <tr><td>Spacing Guide</td><td>${results.requiredLmEquivalent.textContent}</td></tr>
+          <tr><td>Climate Profile</td><td>${results.climateSummary.textContent}</td></tr>
+        </table>
+        <div class="hero-number">
+          <div class="value">${results.requiredUnits.textContent}</div>
+          <div class="label">Recommended AeroSpin 500 Units</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="assessment">
+      <h3>${climateAssessmentTitle}</h3>
+      <p>${results.notes.textContent}</p>
+      <ul>
+        <li>Passive roof ventilation strategy aligned to provided roof conditions.</li>
+        <li>Compliant airflow pathways should be confirmed during installer review.</li>
+        <li>Final specification to be verified against applicable NCC provisions.</li>
+      </ul>
+    </section>
+
+    <footer class="footer">
+      <div class="tag">Engineered For Australian Conditions</div>
+      <p>Indicative assessment only. Final ventilation requirements must be confirmed by a qualified installer, engineer, or certifier in accordance with applicable NCC provisions.</p>
+    </footer>
+  </div>
 </body>
 </html>`;
 }
@@ -270,7 +365,20 @@ copyResultsButton.addEventListener("click", async () => {
 sendOrderButton.addEventListener("click", () => {
   const subject = encodeURIComponent("AeroSpin Order Request");
   const body = encodeURIComponent(`${buildSummaryText()}\n\nPlease contact me to proceed with this order request.`);
-  window.location.href = `mailto:sales@tromas.com.au?subject=${subject}&body=${body}`;
+  const mailtoUrl = `mailto:viveka@srsc.net.au?subject=${subject}&body=${body}`;
+  try {
+    const link = document.createElement("a");
+    link.href = mailtoUrl;
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => {
+      results.notes.textContent = "If your email app did not open, please email viveka@srsc.net.au and paste the copied results.";
+    }, 1200);
+  } catch {
+    results.notes.textContent = "Could not open your email app. Please email viveka@srsc.net.au manually.";
+  }
 });
 
 downloadPdfButton.addEventListener("click", () => {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TROMAS AeroSpin Roof Ventilation Calculator</title>
+  <title>TROMAS AeroSpin Ventilation Assessment</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oswald:wght@400;500;600&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
         </div>
       </div>
       <nav class="nav-links" aria-label="Primary">
-        <a href="#calculator" class="nav-btn">AeroSpin 500 Calculator</a>
+        <a href="#calculator" class="nav-btn">Ventilation Assessment</a>
         <a href="#resources" class="nav-btn">Technical Drawings</a>
       </nav>
     </div>
@@ -30,8 +30,8 @@
     <section class="hero panel">
       <div class="hero-inner">
         <p class="kicker">AEROSPIN SERIES</p>
-        <h1>AeroSpin 500 Calculator</h1>
-        <p class="lede">Estimate AeroSpin unit quantities using project dimensions and roof conditions.</p>
+        <h1>AeroSpin Ventilation Assessment</h1>
+        <p class="lede">Generate a specification-grade passive ventilation assessment report for installer and project review.</p>
       </div>
     </section>
 
@@ -45,8 +45,8 @@
     <section id="calculator" class="calc-grid">
       <form id="calculator-form" class="panel spec-panel" novalidate>
         <div class="panel-head">
-          <h2>AeroSpin 500 Calculator</h2>
-          <p>Enter roof details to calculate required AeroSpin 500 units.</p>
+          <h2>Assessment Inputs</h2>
+          <p>Enter project roof details to generate an AeroSpin passive ventilation assessment report.</p>
         </div>
 
         <div class="field-grid">
@@ -72,12 +72,12 @@
 
       <section class="panel result-panel" aria-live="polite">
         <div class="panel-head">
-          <h2>Calculated Output</h2>
-          <p>Technical summary for installer and project review.</p>
+          <h2>Ventilation Assessment Report</h2>
+          <p>Specification-grade summary for installer, certifier, and project review.</p>
         </div>
 
         <article class="output-block">
-          <p class="output-label">Recommended AeroSpin Unit Quantity</p>
+          <p class="output-label">Recommended AeroSpin 500 Units</p>
           <p id="requiredUnits" class="output-value">-</p>
         </article>
 
@@ -96,8 +96,8 @@
         </aside>
 
         <div class="action-row result-action-row">
-          <button type="button" id="sendOrder" class="btn btn-primary">Send Estimate to TROMAS</button>
-          <button type="button" id="downloadPdf" class="btn btn-secondary">Download PDF Estimate</button>
+          <button type="button" id="sendOrder" class="btn btn-primary">Send Assessment to TROMAS</button>
+          <button type="button" id="downloadPdf" class="btn btn-secondary">Download Assessment PDF</button>
         </div>
 
       </section>
