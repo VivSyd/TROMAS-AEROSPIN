@@ -10,23 +10,10 @@ const climateZoneInfo = {
   7: { name: "Zone 7", climate: "Cool temperate", risk: "High condensation risk", note: "Ventilation is important for condensation and moisture control." },
   8: { name: "Zone 8", climate: "Alpine", risk: "Highest condensation risk", note: "Project-specific ventilation review is strongly recommended." }
 };
-// Seed mapping for launch; expand as needed for full Australia coverage.
-const postcodeToClimateZone = {
-  "2567": 6,
-  "2000": 5,
-  "3000": 6,
-  "4000": 2,
-  "5000": 5,
-  "6000": 5,
-  "7000": 7,
-  "0800": 1
-};
-
 const form = document.getElementById("calculator-form");
 const copyResultsButton = document.getElementById("copyResults");
 const sendOrderButton = document.getElementById("sendOrder");
 const downloadPdfButton = document.getElementById("downloadPdf");
-const postcodeInput = document.getElementById("postcode");
 const climateZoneField = document.getElementById("climateZoneFallbackField");
 const climateZoneSelect = document.getElementById("climateZone");
 const calculatorSection = document.getElementById("calculator");
@@ -57,10 +44,6 @@ function formatNumber(value, decimals = 2) {
   }).format(value);
 }
 
-function lookupClimateZoneFromPostcode(postcode) {
-  return postcodeToClimateZone[String(postcode)] || null;
-}
-
 function calculateAeroSpin500({
   roofLength,
   roofPitch,
@@ -83,7 +66,7 @@ function calculateAeroSpin500({
     return { ok: false, message: "AeroSpin effective area is missing or invalid." };
   }
   if (!climateZoneInfo[cz]) {
-    return { ok: false, message: "Climate zone could not be confirmed. Please check postcode or select a climate zone." };
+    return { ok: false, message: "Please select a valid climate zone." };
   }
 
   let requiredArea;
@@ -166,15 +149,7 @@ function buildReportId() {
 }
 
 function updateClimateFallbackVisibility() {
-  const postcode = String(postcodeInput.value || "").trim();
   climateZoneField.hidden = false;
-  if (postcode.length < 4) {
-    return;
-  }
-  const postcodeZone = lookupClimateZoneFromPostcode(postcode);
-  if (postcodeZone) {
-    climateZoneSelect.value = String(postcodeZone);
-  }
 }
 
 function buildSummaryHtml() {
@@ -308,16 +283,15 @@ function syncSectionVisibility() {
   }
 }
 
+if (form) {
 form.addEventListener("submit", (event) => {
   event.preventDefault();
 
   const roofLength = Number(form.roofLength.value);
   const roofPitch = Number(form.roofPitch.value);
   const ceilingType = form.ceilingType.value;
-  const postcode = String(postcodeInput.value || "").trim();
-  const postcodeZone = lookupClimateZoneFromPostcode(postcode);
   const selectedZone = climateZoneSelect.value ? Number(climateZoneSelect.value) : null;
-  const climateZone = postcodeZone || selectedZone;
+  const climateZone = selectedZone;
 
   const result = calculateAeroSpin500({
     roofLength,
@@ -342,11 +316,15 @@ form.addEventListener("submit", (event) => {
   results.climateSummary.textContent = `${data.climate} (${data.risk})`;
   results.notes.textContent = `${warnings}${data.zoneNote} ${defaultNote}`;
 });
+}
 
+if (form) {
 form.addEventListener("reset", () => {
   window.requestAnimationFrame(resetResults);
 });
+}
 
+if (copyResultsButton) {
 copyResultsButton.addEventListener("click", async () => {
   const summary = buildSummaryText();
   try {
@@ -359,7 +337,9 @@ copyResultsButton.addEventListener("click", async () => {
     results.notes.textContent = "Clipboard access was blocked. Please copy results manually.";
   }
 });
+}
 
+if (sendOrderButton) {
 sendOrderButton.addEventListener("click", () => {
   const subject = encodeURIComponent("AeroSpin Order Request");
   const body = encodeURIComponent(`${buildSummaryText()}\n\nPlease contact me to proceed with this order request.`);
@@ -378,11 +358,13 @@ sendOrderButton.addEventListener("click", () => {
     results.notes.textContent = "Could not open your email app. Please email viveka@srsc.net.au manually.";
   }
 });
+}
 
+if (downloadPdfButton) {
 downloadPdfButton.addEventListener("click", () => {
   const printWindow = window.open("", "_blank", "width=900,height=700");
   if (!printWindow) {
-    results.notes.textContent = "Pop-up blocked. Please allow pop-ups to download the PDF estimate.";
+    results.notes.textContent = "Pop-up blocked. Please allow pop-ups to download the assessment PDF.";
     return;
   }
 
@@ -392,6 +374,7 @@ downloadPdfButton.addEventListener("click", () => {
   printWindow.focus();
   printWindow.print();
 });
+}
 
 document.querySelectorAll(".tab-btn").forEach((button) => {
   button.addEventListener("click", () => {
@@ -399,7 +382,6 @@ document.querySelectorAll(".tab-btn").forEach((button) => {
   });
 });
 
-postcodeInput.addEventListener("input", updateClimateFallbackVisibility);
 updateClimateFallbackVisibility();
 activateTab("tab-tech");
 resetResults();
