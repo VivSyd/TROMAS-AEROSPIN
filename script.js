@@ -167,15 +167,13 @@ function buildReportId() {
 
 function updateClimateFallbackVisibility() {
   const postcode = String(postcodeInput.value || "").trim();
+  climateZoneField.hidden = false;
   if (postcode.length < 4) {
-    climateZoneField.hidden = true;
-    climateZoneSelect.value = "";
     return;
   }
   const postcodeZone = lookupClimateZoneFromPostcode(postcode);
-  climateZoneField.hidden = Boolean(postcodeZone);
   if (postcodeZone) {
-    climateZoneSelect.value = "";
+    climateZoneSelect.value = String(postcodeZone);
   }
 }
 
