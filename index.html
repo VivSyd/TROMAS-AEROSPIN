@@ -46,20 +46,14 @@
       <form id="calculator-form" class="panel spec-panel" novalidate>
         <div class="panel-head">
           <h2>AeroSpin 500 Calculator</h2>
-          <p>Enter project dimensions and roof details in metric units.</p>
+          <p>Enter roof details to calculate required AeroSpin 500 units.</p>
         </div>
 
         <div class="field-grid">
           <div class="field"><label for="roofLength">Roof length (m)</label><input id="roofLength" name="roofLength" type="number" min="0" step="0.01" required /></div>
-          <div class="field"><label for="roofWidth">Roof width (m)</label><input id="roofWidth" name="roofWidth" type="number" min="0" step="0.01" required /></div>
           <div class="field"><label for="roofPitch">Roof pitch (degrees)</label><input id="roofPitch" name="roofPitch" type="number" min="0" step="0.1" required /></div>
-          <div class="field"><label for="buildingType">Building type</label><select id="buildingType" name="buildingType" required><option value="Warehouse">Warehouse</option><option value="Factory">Factory</option><option value="Workshop">Workshop</option><option value="Shed">Shed</option><option value="Commercial">Commercial</option></select></div>
-          <div class="field"><label for="roofType">Roof type</label><select id="roofType" name="roofType" required><option value="Gable">Gable</option><option value="Skillion">Skillion</option><option value="Flat">Flat</option></select></div>
-          <div class="field"><label for="ceilingType">Ceiling type</label><select id="ceilingType" name="ceilingType" required><option value="Flat ceiling">Flat ceiling</option><option value="Raked / cathedral ceiling">Raked / cathedral ceiling</option></select></div>
-          <div class="field"><label for="climateZone">Climate zone</label><select id="climateZone" name="climateZone" required><option value="Zone 4">Zone 4</option><option value="Zone 5">Zone 5</option><option value="Zone 6">Zone 6</option><option value="Zone 7">Zone 7</option><option value="Zone 8">Zone 8</option></select></div>
-          <div class="field"><label for="existingVentilation">Existing ventilation</label><select id="existingVentilation" name="existingVentilation" required><option value="Yes">Yes</option><option value="No">No</option></select></div>
-          <div class="field"><label for="insulationPresent">Insulation present</label><select id="insulationPresent" name="insulationPresent" required><option value="Yes">Yes</option><option value="No">No</option></select></div>
-        </div>
+          <div class="field"><label for="ceilingType">Ceiling type</label><select id="ceilingType" name="ceilingType" required><option value="Flat ceiling">Standard</option><option value="Raked / cathedral ceiling">Cathedral / raked</option></select></div>
+          </div>
 
         <div class="action-row">
           <button type="submit" class="btn btn-primary">Calculate</button>
@@ -80,11 +74,11 @@
         </article>
 
         <dl class="data-list">
-          <div><dt>Roof area</dt><dd id="roofArea">-</dd></div>
-          <div><dt>Required high-level ventilation area</dt><dd id="requiredHighLevelVentilation">-</dd></div>
-          <div><dt>Required LM equivalent</dt><dd id="requiredLmEquivalent">-</dd></div>
-          <div><dt>Total LM provided</dt><dd id="totalLmProvided">-</dd></div>
-          <div><dt>Low-level ventilation required</dt><dd id="lowLevelVentilation">-</dd></div>
+          <div><dt>Roof length</dt><dd id="roofArea">-</dd></div>
+          <div><dt>Required vent area</dt><dd id="requiredHighLevelVentilation">-</dd></div>
+          <div><dt>Approx spacing</dt><dd id="requiredLmEquivalent">-</dd></div>
+          <div><dt>AeroSpin 500 effective area</dt><dd id="totalLmProvided">-</dd></div>
+          <div><dt>Spacing guidance</dt><dd id="lowLevelVentilation">-</dd></div>
         </dl>
 
         <aside class="callout callout-warn">
@@ -97,15 +91,6 @@
           <button type="button" id="downloadPdf" class="btn btn-secondary">Download PDF Estimate</button>
         </div>
 
-        <section class="tech-block">
-          <h3>Technical Notes</h3>
-          <ul>
-            <li>AEROSPIN_LM_PER_UNIT = 2.63 LM</li>
-            <li>HIGH_LEVEL_RATE_STANDARD = 5000 mm² per LM</li>
-            <li>LOW_LEVEL_RATE_STANDARD = 7000 mm² per LM</li>
-            <li>LOW_LEVEL_RATE_HIGH = 25000 mm² per LM</li>
-          </ul>
-        </section>
       </section>
     </section>
 
@@ -148,4 +133,5 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
