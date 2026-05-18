@@ -59,7 +59,6 @@
         <div class="action-row">
           <button type="submit" class="btn btn-primary">Calculate</button>
           <button type="reset" class="btn btn-secondary">Reset</button>
-          <button type="button" id="copyResults" class="btn btn-secondary">Copy Results</button>
         </div>
 
         <section class="climate-map-panel" aria-labelledby="climateMapTitle">
@@ -95,18 +94,11 @@
         </aside>
 
         <div class="action-row result-action-row">
-          <button type="button" id="sendOrder" class="btn btn-primary">Send Assessment to TROMAS</button>
+          <button type="button" id="sendOrder" class="btn btn-primary">Order with TROMAS</button>
           <button type="button" id="downloadPdf" class="btn btn-secondary">Download Assessment PDF</button>
         </div>
 
       </section>
-    </section>
-
-    <section class="info-grid">
-      <article class="panel info-card"><h3>Indicative Estimate</h3><p>Use results as a design-stage estimate only.</p></article>
-      <article class="panel info-card"><h3>Installer Verification</h3><p>Confirm final specification with installer or engineer.</p></article>
-      <article class="panel info-card"><h3>Input Dependent</h3><p>Outputs are calculated from entered dimensions and roof conditions.</p></article>
-      <article class="panel info-card"><h3>Technical Support</h3><p>Contact TROMAS for project-specific guidance.</p></article>
     </section>
 
     <section id="resources" class="panel tabs-panel">
@@ -136,7 +128,38 @@
         </div>
       </div>
     </section>
+
+    <section class="info-grid">
+      <article class="panel info-card"><h3>Indicative Estimate</h3><p>Use results as a design-stage estimate only.</p></article>
+      <article class="panel info-card"><h3>Installer Verification</h3><p>Confirm final specification with installer or engineer.</p></article>
+      <article class="panel info-card"><h3>Input Dependent</h3><p>Outputs are calculated from entered dimensions and roof conditions.</p></article>
+      <article class="panel info-card"><h3>Technical Support</h3><p>Contact TROMAS for project-specific guidance.</p></article>
+    </section>
   </main>
+
+  <div id="orderModal" class="order-modal" hidden>
+    <div class="order-modal-backdrop" data-close-order-modal="true"></div>
+    <section class="order-modal-card panel" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
+      <div class="panel-head">
+        <h2 id="orderModalTitle">TROMAS Order Form</h2>
+        <p>Complete customer details and send this assessment as an order request.</p>
+      </div>
+      <div class="field-grid">
+        <div class="field"><label for="orderCustomerName">Customer name</label><input id="orderCustomerName" type="text" required /></div>
+        <div class="field"><label for="orderCustomerEmail">Customer email</label><input id="orderCustomerEmail" type="email" required /></div>
+        <div class="field"><label for="orderCompanyName">Company name</label><input id="orderCompanyName" type="text" required /></div>
+        <div class="field"><label for="orderCustomerPhone">Phone</label><input id="orderCustomerPhone" type="tel" required /></div>
+      </div>
+      <div class="field order-report-field">
+        <label for="orderReportDetails">Assessment details</label>
+        <textarea id="orderReportDetails" rows="9" readonly></textarea>
+      </div>
+      <div class="action-row">
+        <button type="button" id="sendOrderEmail" class="btn btn-primary">Send Order to TROMAS</button>
+        <button type="button" id="closeOrderModal" class="btn btn-secondary">Cancel</button>
+      </div>
+    </section>
+  </div>
 
   <script src="script.js"></script>
 </body>

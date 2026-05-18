@@ -40,10 +40,10 @@ body { background: var(--bg-base); color: var(--text-primary); font-family: var(
 .nav-links { display: flex; gap: var(--space-5); }
 .nav-links a { color: #222; text-decoration: none; text-transform: uppercase; letter-spacing: 0.06em; font-family: var(--font-spec); font-size: 0.88rem; }
 .nav-links a:hover { color: var(--color-primary-green); }
-.nav-btn { min-height: 40px; display: inline-flex; align-items: center; justify-content: center; padding: 0.45rem 0.75rem; border: 1px solid #23472a; background: var(--color-primary-green); color: var(--color-kraft-brown); }
-.nav-btn:hover { background: #0d2712; color: var(--color-kraft-brown); }
-.nav-links a.nav-btn { color: var(--color-kraft-brown); }
-.nav-links a.nav-btn:hover { color: var(--color-kraft-brown); }
+.nav-btn { min-height: 40px; display: inline-flex; align-items: center; justify-content: center; padding: 0.45rem 0.75rem; border: 1px solid #23472a; background: var(--color-primary-green); color: #ffffff; }
+.nav-btn:hover { background: #0d2712; color: #ffffff; }
+.nav-links a.nav-btn { color: #ffffff; }
+.nav-links a.nav-btn:hover { color: #ffffff; }
 .app-grid { display: grid; gap: var(--space-6); padding-block: var(--space-6) var(--space-10); }
 .panel { background: var(--bg-panel); border: 1px solid var(--border-soft); border-radius: var(--radius-none); box-shadow: none; padding: var(--space-6); }
 .spec-panel,
@@ -161,6 +161,35 @@ dd { margin: 0; font-weight: 600; }
 .tab-btn { min-height: 42px; border: 1px solid #9ba1a6; background: var(--bg-base); color: #222; padding: 0.5rem 0.85rem; font: 700 0.82rem/1 var(--font-spec); text-transform: uppercase; letter-spacing: 0.07em; cursor: pointer; }
 .tab-btn.active { background: var(--color-primary-green); color: #fff; border-color: #23472a; }
 .tab-content { border-top: 1px solid var(--border-soft); padding-top: 1rem; }
+.order-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+.order-modal[hidden] {
+  display: none;
+}
+.order-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 17, 17, 0.58);
+}
+.order-modal-card {
+  position: relative;
+  z-index: 1;
+  width: min(760px, 96vw);
+  max-height: 90vh;
+  overflow: auto;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-panel);
+}
+.order-report-field textarea {
+  min-height: 180px;
+  resize: vertical;
+}
 @media (max-width: 1024px) {
   .calc-grid,
   .system-grid { grid-template-columns: 1fr; }

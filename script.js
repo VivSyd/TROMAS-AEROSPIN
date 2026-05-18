@@ -11,11 +11,18 @@ const climateZoneInfo = {
   8: { name: "Zone 8", climate: "Alpine", risk: "Highest condensation risk", note: "Project-specific ventilation review is strongly recommended." }
 };
 const form = document.getElementById("calculator-form");
-const copyResultsButton = document.getElementById("copyResults");
 const sendOrderButton = document.getElementById("sendOrder");
 const downloadPdfButton = document.getElementById("downloadPdf");
 const climateZoneField = document.getElementById("climateZoneFallbackField");
 const climateZoneSelect = document.getElementById("climateZone");
+const orderModal = document.getElementById("orderModal");
+const closeOrderModalButton = document.getElementById("closeOrderModal");
+const sendOrderEmailButton = document.getElementById("sendOrderEmail");
+const orderCustomerNameInput = document.getElementById("orderCustomerName");
+const orderCustomerEmailInput = document.getElementById("orderCustomerEmail");
+const orderCompanyNameInput = document.getElementById("orderCompanyName");
+const orderCustomerPhoneInput = document.getElementById("orderCustomerPhone");
+const orderReportDetails = document.getElementById("orderReportDetails");
 const calculatorSection = document.getElementById("calculator");
 const resourcesSection = document.getElementById("resources");
 
@@ -140,6 +147,15 @@ function buildSummaryText() {
   ].join("\n");
 }
 
+function buildOrderHeaderText() {
+  return [
+    `Customer Name: ${String(orderCustomerNameInput?.value || "").trim() || "-"}`,
+    `Customer Email: ${String(orderCustomerEmailInput?.value || "").trim() || "-"}`,
+    `Company Name: ${String(orderCompanyNameInput?.value || "").trim() || "-"}`,
+    `Phone: ${String(orderCustomerPhoneInput?.value || "").trim() || "-"}`
+  ].join("\n");
+}
+
 function buildReportId() {
   const d = new Date();
   const yy = String(d.getFullYear()).slice(-2);
@@ -150,6 +166,22 @@ function buildReportId() {
 
 function updateClimateFallbackVisibility() {
   climateZoneField.hidden = false;
+}
+
+function openOrderModal() {
+  if (!orderModal || !orderReportDetails) {
+    results.notes.textContent = "Order form is unavailable right now. Please refresh and try again.";
+    return;
+  }
+  orderReportDetails.value = buildSummaryText();
+  orderModal.hidden = false;
+}
+
+function closeOrderModal() {
+  if (!orderModal) {
+    return;
+  }
+  orderModal.hidden = true;
 }
 
 function buildSummaryHtml() {
@@ -324,25 +356,32 @@ form.addEventListener("reset", () => {
 });
 }
 
-if (copyResultsButton) {
-copyResultsButton.addEventListener("click", async () => {
-  const summary = buildSummaryText();
-  try {
-    await navigator.clipboard.writeText(summary);
-    copyResultsButton.textContent = "Copied";
-    setTimeout(() => {
-      copyResultsButton.textContent = "Copy Results";
-    }, 1400);
-  } catch {
-    results.notes.textContent = "Clipboard access was blocked. Please copy results manually.";
+if (sendOrderButton) {
+sendOrderButton.addEventListener("click", () => {
+  if (results.requiredUnits.textContent === "-") {
+    results.notes.textContent = "Please calculate the assessment first before sending an order.";
+    return;
   }
+  openOrderModal();
 });
 }
 
-if (sendOrderButton) {
-sendOrderButton.addEventListener("click", () => {
-  const subject = encodeURIComponent("AeroSpin Order Request");
-  const body = encodeURIComponent(`${buildSummaryText()}\n\nPlease contact me to proceed with this order request.`);
+if (sendOrderEmailButton) {
+sendOrderEmailButton.addEventListener("click", () => {
+  const customerName = String(orderCustomerNameInput?.value || "").trim();
+  const customerEmail = String(orderCustomerEmailInput?.value || "").trim();
+  const companyName = String(orderCompanyNameInput?.value || "").trim();
+  const customerPhone = String(orderCustomerPhoneInput?.value || "").trim();
+
+  if (!customerName || !customerEmail || !companyName || !customerPhone) {
+    results.notes.textContent = "Please complete customer name, email, company name, and phone before sending the order form.";
+    return;
+  }
+
+  const subject = encodeURIComponent(`AeroSpin 500 Order Form - ${companyName}`);
+  const body = encodeURIComponent(
+    `Order Form Submission\n\n${buildOrderHeaderText()}\n\n${orderReportDetails.value}\n\nPlease process this order request and confirm next steps.`
+  );
   const mailtoUrl = `mailto:viveka@srsc.net.au?subject=${subject}&body=${body}`;
   try {
     const link = document.createElement("a");
@@ -360,12 +399,11 @@ sendOrderButton.addEventListener("click", () => {
 });
 }
 
-if (downloadPdfButton) {
-downloadPdfButton.addEventListener("click", () => {
+function downloadAssessmentReport() {
   const printWindow = window.open("", "_blank", "width=900,height=700");
   if (!printWindow) {
     results.notes.textContent = "Pop-up blocked. Please allow pop-ups to download the assessment PDF.";
-    return;
+    return false;
   }
 
   printWindow.document.open();
@@ -373,6 +411,25 @@ downloadPdfButton.addEventListener("click", () => {
   printWindow.document.close();
   printWindow.focus();
   printWindow.print();
+  return true;
+}
+
+if (downloadPdfButton) {
+downloadPdfButton.addEventListener("click", () => {
+  downloadAssessmentReport();
+});
+}
+
+if (closeOrderModalButton) {
+closeOrderModalButton.addEventListener("click", closeOrderModal);
+}
+
+if (orderModal) {
+orderModal.addEventListener("click", (event) => {
+  const target = event.target;
+  if (target instanceof HTMLElement && target.dataset.closeOrderModal === "true") {
+    closeOrderModal();
+  }
 });
 }
 
