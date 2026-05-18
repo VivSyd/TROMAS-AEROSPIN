@@ -348,12 +348,17 @@ function activateTab(tabId) {
 }
 
 function syncSectionVisibility() {
-  const showResources = window.location.hash === "#resources";
+  const hash = String(window.location.hash || "").toLowerCase();
+  const showResources = hash.startsWith("#resources");
   if (calculatorSection) {
     calculatorSection.hidden = showResources;
+    calculatorSection.classList.toggle("is-hidden", showResources);
+    calculatorSection.setAttribute("aria-hidden", String(showResources));
   }
   if (resourcesSection) {
     resourcesSection.hidden = !showResources;
+    resourcesSection.classList.toggle("is-hidden", !showResources);
+    resourcesSection.setAttribute("aria-hidden", String(!showResources));
   }
 }
 
